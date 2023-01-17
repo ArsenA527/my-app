@@ -1,5 +1,5 @@
 <!-- eslint-disable vuejs-accessibility/label-has-for -->
-<template >
+<template>
   <aside class="filter">
     <h2 class="filter__title">Фильтры</h2>
 
@@ -17,7 +17,7 @@
         <label class="form__label form__label--price">
           <input
             class="form__input"
-            type="text" name="min-price"
+            type="text" name="max-price"
             v-model.number="currentPriceTo"
           >
           <span class="form__value">До</span>
@@ -30,7 +30,7 @@
           <select
             class="form__select"
             type="text" name="category"
-            v-model.number="currentCategoryId"
+            v-model.number="currentСategoryId"
           >
             <option value="0">Все категории</option>
             <option
@@ -50,16 +50,16 @@
           <li
             class="colors__item"
             v-for="color in colors"
-            :key="color"
+            :key="color.id"
           >
             <label class="colors__label">
               <input
-                v-model="currentColorValue"
+                v-model="currentСolorId"
                 class="colors__radio sr-only"
                 type="radio" name="color"
-                :value="color.value"
+                :value="color.id"
               >
-              <span class="colors__value" :style="{'background-color': color.value}">
+              <span class="colors__value" :style="{'background-color': color.code}">
               </span>
             </label>
           </li>
@@ -154,8 +154,7 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
-import { API_BASE_URL } from '../config';
-import colors from '../data/colors';
+import {API_BASE_URL} from '../config';
 
 export default {
 
@@ -163,22 +162,21 @@ export default {
     return {
       currentPriceFrom: 0,
       currentPriceTo: 0,
-      currentCategoryId: 0,
-      currentColorValue: 0,
-
+      currentСategoryId: 0,
+      currentСolorId: 0,
       categoriesData: null,
+      colorsData: null,
     };
   },
 
-  props: ['priceFrom', 'priceTo', 'categoryId', 'colorValue'],
+  props: ['priceFrom', 'priceTo', 'categoryId', 'colorId'],
 
   computed: {
     categories() {
       return this.categoriesData ? this.categoriesData.items : [];
     },
-
     colors() {
-      return colors;
+      return this.colorsData ? this.colorsData.items : [];
     },
   },
 
@@ -190,34 +188,43 @@ export default {
       this.currentPriceTo = value;
     },
     categoryId(value) {
-      this.currentCategoryId = value;
+      this.currentСategoryId = value;
     },
-    colorValue(value) {
-      this.currentColorValue = value;
+    colorId(value) {
+      this.currentСolorId = value;
     },
   },
+
   methods: {
     submit() {
       this.$emit('update:priceFrom', this.currentPriceFrom);
       this.$emit('update:priceTo', this.currentPriceTo);
-      this.$emit('update:categoryId', this.currentCategoryId);
-      this.$emit('update:colorValue', this.currentColorValue);
+      this.$emit('update:categoryId', this.currentСategoryId);
+      this.$emit('update:colorId', this.currentСolorId);
     },
+
     reset() {
       this.$emit('update:priceFrom', 0);
       this.$emit('update:priceTo', 0);
       this.$emit('update:categoryId', 0);
-      this.$emit('update:colorValue', 0);
+      this.$emit('update:colorId', 0);
     },
 
     loadCategories() {
       axios.get(API_BASE_URL + '/api/productCategories')
         .then((response) => this.categoriesData = response.data);
     },
+
+    loadColors() {
+      axios.get(API_BASE_URL + '/api/colors')
+        .then((response) => this.colorsData = response.data);
+    },
+
   },
 
   created() {
     this.loadCategories();
+    this.loadColors();
   },
 };
 </script>

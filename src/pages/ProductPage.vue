@@ -1,4 +1,4 @@
-<!-- eslint-disable -->
+<!-- eslint-disable vuejs-accessibility/label-has-for -->
 <template>
   <div>
     <main class="content container" v-if="productLoading">Загрузка товара...</main>
@@ -23,6 +23,7 @@
           </li>
         </ul>
       </div>
+
       <section class="item">
         <div class="item__pics pics">
           <div class="pics__wrapper">
@@ -34,6 +35,7 @@
             >
           </div>
         </div>
+
         <div class="item__info">
           <span class="item__code">Артикул: {{ product.id }}</span>
           <h2 class="item__title">
@@ -44,49 +46,33 @@
               <b class="item__price">
                 {{ product.price | numberFormat}} ₽
               </b>
+
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет:</legend>
-                <ul class="colors">
+                <ul
+                  class="colors"
+                  v-for="color in colors"
+                  :key="color.id"
+                >
                   <li class="colors__item">
                     <label class="colors__label">
                       <input
                         class="colors__radio sr-only"
                         type="radio"
                         name="color-item"
-                        value="blue"
+                        :value="color.id"
                         checked=""
                       >
-                      <span class="colors__value" style="background-color: #73B6EA;">
+                      <span class="colors__value" :style="{'background-color': color.code}">
                       </span>
                     </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input
-                        class="colors__radio sr-only"
-                        type="radio"
-                        name="color-item"
-                        value="yellow"
-                      >
-                      <span class="colors__value" style="background-color: #FFBE15;">
-                      </span>
-                    </label>
-                  </li>
-                  <li class="colors__item">
-                    <label class="colors__label">
-                      <input
-                        class="colors__radio sr-only"
-                        type="radio"
-                        name="color-item"
-                        value="gray"
-                      >
-                      <span class="colors__value" style="background-color: #939393;">
-                    </span></label>
                   </li>
                 </ul>
               </fieldset>
+
               <fieldset class="form__block">
                 <legend class="form__legend">Объемб в ГБ:</legend>
+
                 <ul class="sizes sizes--primery">
                   <li class="sizes__item">
                     <label class="sizes__label">
@@ -119,25 +105,16 @@
                   </li>
                 </ul>
               </fieldset>
+
               <div class="item__row">
                 <div class="form__counter">
-                  <!-- <button type="button" aria-label="Убрать один товар">
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-minus"></use>
-                    </svg>
-                  </button>
-                  <input type="text" v-model="productAmount">
-                  <button type="button" aria-label="Добавить один товар">
-                    <svg width="12" height="12" fill="currentColor">
-                      <use xlink:href="#icon-plus"></use>
-                    </svg>
-                  </button> -->
                   <BaseAmountChanges
                     :amount="productAmount"
                     @increment="increment()"
                     @decrement="decrement()"
                   />
                 </div>
+
                 <button
                   class="button button--primery"
                   type="submit"
@@ -146,11 +123,13 @@
                   В корзину
                 </button>
               </div>
+
               <div v-show="productAdded">Товар добавлен в корзину</div>
               <div v-show="productAddedSending">Добавляем товар в корзину</div>
             </form>
           </div>
         </div>
+
         <div class="item__desc">
           <ul class="tabs">
             <li class="tabs__item">
@@ -174,6 +153,7 @@
               </a>
             </li>
           </ul>
+
           <div class="item__content">
             <p>
               Навигация GPS, ГЛОНАСС, BEIDOU Galileo и QZSS<br>
@@ -181,10 +161,13 @@
               Связь по Bluetooth Smart, ANT+ и Wi-Fi<br>
               Поддержка сторонних приложений<br>
             </p>
+
             <a href="#">
               Все характеристики
             </a>
+
             <h3>Что это?</h3>
+
             <p>
               Wahoo ELEMNT BOLT GPS – это велокомпьютер,
               который позволяет оптимизировать свои велотренировки,
@@ -198,7 +181,9 @@
               Эта информация позволяет смотреть уже преодоленные маршруты
               и планировать новые велопрогулки.
             </p>
+
             <h3>Дизайн</h3>
+
             <p>
               Велокомпьютер Wahoo ELEMNT BOLT очень компактный.
               Размеры устройства составляют всего 74,6 x 47,3 x 22,1 мм.
@@ -217,16 +202,18 @@
     </main>
   </div>
 </template>
+
 <script>
 /* eslint-disable */
-import {API_BASE_URL} from '@/config';
 import { mapGetters, mapActions } from 'vuex';
 import axios from 'axios';
+import {API_BASE_URL} from '@/config';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import BaseAmountChanges from '@/components/BaseAmountChanges.vue';
 
 export default {
+
   components: { BaseAmountChanges },
 
   data() {
@@ -240,8 +227,6 @@ export default {
     };
   },
 
-  props: ['pageParams'],
-
   filters: {
     numberFormat,
   },
@@ -250,18 +235,18 @@ export default {
     product() {
       return this.productData;
     },
+
     category() {
       return this.productData.category;
+    },
+
+    colors() {
+      return this.productData.colors;
     },
   },
 
   methods: {
     ...mapActions(['addProductToCart']),
-
-    // ...mapGetters([
-    //   'incrementCartItem',
-    //   'decrementCartItem',
-    // ]),
 
     gotoPage,
 
@@ -276,10 +261,11 @@ export default {
     },
 
     increment() {
-      this.$store.commit('incrementCartItem');
+      this.productAmount++;
     },
+
     decrement() {
-      this.$store.commit('decrementCartItem');
+      this.productAmount--;
     },
 
     loadProduct() {
@@ -290,13 +276,11 @@ export default {
         .catch(() => this.productLoadingFailed = true)
         .then(() => this.productLoading = false);
     },
-
   },
 
   created() {
     this.loadProduct();
   },
-
   watch: {
     '$route.params.id'() {
       this.loadProduct();

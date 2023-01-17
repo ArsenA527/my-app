@@ -9,12 +9,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    cartProducts: [{
-      productId: 1,
-      amount: 2,
-    }],
+    cartProducts: [],
 
     userAccessKey: null,
+
     cartProductsData: [],
   },
 
@@ -29,16 +27,20 @@ export default new Vuex.Store({
         item.amount = amount;
       }
     },
+
     deleteCartProduct(state, productId) {
       state.cartProducts = state.cartProducts.filter((item) => item.productId !== productId);
     },
+
     incrementCartItem(state) {
       console.log(state.cartProducts);
       state.cartProducts.amount += 1;
     },
+
     decrementCartItem(state) {
       if (state.cartProducts.amount > 1) state.cartProducts.amount -= 1;
     },
+
     updateUserAccessKey(state, accessKey) {
       state.userAccessKey = accessKey;
     },
@@ -56,6 +58,7 @@ export default new Vuex.Store({
       });
     },
   },
+
   getters: {
     cartDetailProducts(state) {
       return state.cartProducts.map((item) => {
@@ -70,16 +73,19 @@ export default new Vuex.Store({
         };
       });
     },
+
     cartTotalPrice(state, getters) {
       return getters.cartDetailProducts.reduce((acc, item) => (item.product.price * item
         .amount) + acc, 0);
     },
+
     cartTotalAmount(state, getters) {
       return getters.cartDetailProducts.reduce((acc, item) => +item.amount + acc, 0);
     },
   },
 
   actions: {
+
     loadCart(context) {
       return axios.get(API_BASE_URL + '/api/baskets', {
           params: {
@@ -114,7 +120,6 @@ export default new Vuex.Store({
             context.commit('syncCartProducts');
           });
         })
-
     },
 
     updateCartProductAmount(context, {

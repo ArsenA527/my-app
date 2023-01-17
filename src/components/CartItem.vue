@@ -50,24 +50,28 @@
 
 <script>
 
-// import { mapMutation } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 
 export default {
+
   props: ['item'],
+
   filters: {
     numberFormat,
   },
+
   computed: {
     amount: {
       get() {
         return this.item.amount;
       },
+
       set(value) {
         this.$store.dispatch('updateCartProductAmount', { productId: this.item.productId, amount: value });
       },
     },
   },
+
   methods: {
     deleteProduct(productId) {
       this.$store.commit('deleteCartProduct', productId);

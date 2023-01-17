@@ -1,4 +1,3 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
 <template>
   <main class="content container">
     <div class="content__top">
@@ -50,22 +49,25 @@
 
 <script>
 
-/* eslint-disable */
 import { mapGetters } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
+import CartItem from '@/components/CartItem.vue';
 
 export default {
+
+  components: {
+    CartItem,
+  },
 
   filters: {
     numberFormat,
   },
+
   computed: {
     ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice', totalAmount: 'cartTotalAmount' }),
-
     products() {
       return this.$store.getters.cartDetailProducts;
     },
   },
-
 };
 </script>

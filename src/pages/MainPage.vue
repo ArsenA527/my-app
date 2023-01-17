@@ -14,7 +14,7 @@
         :price-from.sync="filterPriceFrom"
         :price-to.sync="filterPriceTo"
         :category-id.sync="filterCategoryId"
-        :color-value.sync="filterColor"
+        :color-id.sync="filterColorId"
       />
       <section class="catalog">
         <div v-if="productsLoading">Загрузка товаров...</div>
@@ -33,23 +33,25 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
+import {API_BASE_URL} from '@/config';
 import ProductsList from '@/components/ProductsList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductsFilter from '@/components/ProductsFilter.vue';
-import { API_BASE_URL } from '@/config';
 
 export default {
+
   components: {
     ProductsList,
     BasePagination,
     ProductsFilter,
   },
+
   data() {
     return {
       filterPriceFrom: 0,
       filterPriceTo: 0,
       filterCategoryId: 0,
-      filterColor: 0,
+      filterColorId: 0,
       page: 1,
       productsPerPage: 3,
 
@@ -58,8 +60,8 @@ export default {
       productsLoadingFailed: false,
     };
   },
-  computed: {
 
+  computed: {
     products() {
       return this.productsData
         ? this.productsData.items.map((product) => ({
@@ -68,6 +70,7 @@ export default {
         }))
         : [];
     },
+
     countProducts() {
       return this.productsData ? this.productsData.pagination.total : 0;
     },
@@ -79,12 +82,12 @@ export default {
       this.productsLoadingFailed = false;
       clearTimeout(this.loadPorductsTimer);
       this.loadPorductsTimer = setTimeout(() => {
-
         axios.get(API_BASE_URL + '/api/products', {
           params: {
             page: this.page,
             limit: this.productsPerPage,
             categoryId: this.filterCategoryId,
+            colorId: this.filterColorId,
             minPrice: this.filterPriceFrom,
             maxPrice: this.filterPriceTo,
           },
@@ -100,13 +103,20 @@ export default {
     page() {
       this.loadProducts();
     },
+
     filterPriceFrom() {
       this.loadProducts();
     },
+
     filterPriceTo() {
       this.loadProducts();
     },
+
     filterCategoryId() {
+      this.loadProducts();
+    },
+
+    filterColorId() {
       this.loadProducts();
     },
   },
