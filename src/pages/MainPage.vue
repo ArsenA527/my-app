@@ -1,36 +1,42 @@
 <template>
   <main class="content container">
-  <div class="content__top content__top--catalog">
-    <h1 class="content__title">
-      Каталог
-    </h1>
-    <span class="content__info">
-      152 товара
-    </span>
-  </div>
+    <div class="content__top content__top--catalog">
+      <h1 class="content__title">
+        Каталог
+      </h1>
+      <span class="content__info">
+        152 товара
+      </span>
+    </div>
 
-  <div class="content__catalog">
-    <ProductsFilter
-      :price-from.sync="filterPriceFrom"
-      :price-to.sync="filterPriceTo"
-      :category-id.sync="filterCategoryId"
-      :color-value.sync="filterColor"
-    />
-    <section class="catalog">
-      <ProductsList
+    <div class="content__catalog">
+      <ProductsFilter
+        :price-from.sync="filterPriceFrom"
+        :price-to.sync="filterPriceTo"
+        :category-id.sync="filterCategoryId"
+        :color-value.sync="filterColor"
+      />
+      <section class="catalog">
+        <div v-if="productsLoading">Загрузка товаров...</div>
+        <div v-if="productsLoadingFailed">Произошла ошибка при загрузке товаров
+          <button @click.prevent="loadProducts">Попробовать еще раз</button>
+        </div>
+        <ProductsList
           :products="products"
         />
-      <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
-    </section>
-  </div>
-</main>
+        <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage" />
+      </section>
+    </div>
+  </main>
 </template>
 
 <script>
-import products from '@/data/products';
+/* eslint-disable */
+import axios from 'axios';
 import ProductsList from '@/components/ProductsList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductsFilter from '@/components/ProductsFilter.vue';
+import API_BASE_URL from '@/config';
 
 export default {
   components: {
@@ -46,34 +52,67 @@ export default {
       filterColor: 0,
       page: 1,
       productsPerPage: 3,
+
+      productsData: null,
+      productsLoading: false,
+      productsLoadingFailed: false,
     };
   },
   computed: {
-    filteredProducts() {
-      let filterProducts = products;
-      if (this.filterPriceFrom > 0) {
-        filterProducts = filterProducts.filter((product) => product.price > this.filterPriceFrom);
-      }
-      if (this.filterPriceTo > 0) {
-        filterProducts = filterProducts.filter((product) => product.price < this.filterPriceTo);
-      }
-      if (this.filterCategoryId) {
-        // eslint-disable-next-line max-len
-        filterProducts = filterProducts.filter((product) => product.categoryId === this.filterCategoryId);
-      }
-      if (this.filterColor) {
-        // eslint-disable-next-line max-len
-        filterProducts = filterProducts.filter((product) => product.colors.includes(this.filterColor));
-      }
-      return filterProducts;
-    },
+
     products() {
-      const offset = (this.page - 1) * this.productsPerPage;
-      return this.filteredProducts.slice(offset, offset + this.productsPerPage);
+      return this.productsData
+        ? this.productsData.items.map((product) => ({
+          ...product,
+          imgsrc: product.image.file.url,
+        }))
+        : [];
     },
     countProducts() {
-      return this.filteredProducts.length;
+      return this.productsData ? this.productsData.pagination.total : 0;
     },
+  },
+
+  methods: {
+    loadProducts() {
+      this.productsLoading = true;
+      this.productsLoadingFailed = false;
+      clearTimeout(this.loadPorductsTimer);
+      this.loadPorductsTimer = setTimeout(() => {
+
+        axios.get(API_BASE_URL + '/api/products', {
+          params: {
+            page: this.page,
+            limit: this.productsPerPage,
+            categoryId: this.filterCategoryId,
+            minPrice: this.filterPriceFrom,
+            maxPrice: this.filterPriceTo,
+          },
+        })
+          .then((response) => this.productsData = response.data)
+          .then(() => this.productsLoading = false)
+          .catch(() => this.productsLoadingFailed = true);
+      }, 500);
+    },
+  },
+
+  watch: {
+    page() {
+      this.loadProducts();
+    },
+    filterPriceFrom() {
+      this.loadProducts();
+    },
+    filterPriceTo() {
+      this.loadProducts();
+    },
+    filterCategoryId() {
+      this.loadProducts();
+    },
+  },
+
+  created() {
+    this.loadProducts();
   },
 };
 </script>
