@@ -127,16 +127,15 @@ export default {
   },
 
   created() {
-    // this.$store.dispatch('loadCart');
-    const usserAccessKey = localStorage.getItem('usserAccessKey');
-    if (usserAccessKey) {
-      this.updateUsserAccessKey(usserAccessKey);
+    const userAccessKey = localStorage.getItem('userAccessKey');
+    if (userAccessKey) {
+      this.updateUserAccessKey(userAccessKey);
     }
     this.loadCart();
   },
   methods: {
     ...mapActions(['loadCart']),
-    ...mapMutations(['updateUsserAccessKey']),
+    ...mapMutations(['updateUserAccessKey']),
   },
 };
 </script>

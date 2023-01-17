@@ -154,7 +154,7 @@
 <script>
 /* eslint-disable */
 import axios from 'axios';
-import API_BASE_URL from '../config';
+import { API_BASE_URL } from '../config';
 import colors from '../data/colors';
 
 export default {

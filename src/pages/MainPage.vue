@@ -36,7 +36,7 @@ import axios from 'axios';
 import ProductsList from '@/components/ProductsList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductsFilter from '@/components/ProductsFilter.vue';
-import API_BASE_URL from '@/config';
+import { API_BASE_URL } from '@/config';
 
 export default {
   components: {
@@ -90,8 +90,8 @@ export default {
           },
         })
           .then((response) => this.productsData = response.data)
-          .then(() => this.productsLoading = false)
-          .catch(() => this.productsLoadingFailed = true);
+          .catch(() => this.productsLoadingFailed = true)
+          .then(() => this.productsLoading = false);
       }, 500);
     },
   },

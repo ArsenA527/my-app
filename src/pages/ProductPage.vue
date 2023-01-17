@@ -1,4 +1,4 @@
-<!-- eslint-disable vuejs-accessibility/label-has-for -->
+<!-- eslint-disable -->
 <template>
   <div>
     <main class="content container" v-if="productLoading">Загрузка товара...</main>
@@ -138,10 +138,16 @@
                     @decrement="decrement()"
                   />
                 </div>
-                <button class="button button--primery" type="submit">
+                <button
+                  class="button button--primery"
+                  type="submit"
+                  :disabled="productAddedSending"
+                >
                   В корзину
                 </button>
               </div>
+              <div v-show="productAdded">Товар добавлен в корзину</div>
+              <div v-show="productAddedSending">Добавляем товар в корзину</div>
             </form>
           </div>
         </div>
@@ -213,8 +219,9 @@
 </template>
 <script>
 /* eslint-disable */
-import products from '@/data/products';
-import categories from '@/data/categories';
+import {API_BASE_URL} from '@/config';
+import { mapGetters, mapActions } from 'vuex';
+import axios from 'axios';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import BaseAmountChanges from '@/components/BaseAmountChanges.vue';
@@ -225,6 +232,11 @@ export default {
   data() {
     return {
       productAmount: 1,
+      productData: null,
+      productLoading: false,
+      productLoadingFailed: false,
+      productAdded: false,
+      productAddedSending: false,
     };
   },
 
@@ -236,19 +248,33 @@ export default {
 
   computed: {
     product() {
-      return products.find((product) => product.id === this.pageParams.id);
+      return this.productData;
     },
     category() {
-      return categories.find((category) => category.id === this.product.categoryId);
+      return this.productData.category;
     },
   },
 
   methods: {
+    ...mapActions(['addProductToCart']),
+
+    // ...mapGetters([
+    //   'incrementCartItem',
+    //   'decrementCartItem',
+    // ]),
+
     gotoPage,
 
     addToCart() {
-      this.$store.commit('addProductToCart', { productId: this.product.id, amount: this.productAmount });
+      this.productAdded = false;
+      this.productAddedSending = true;
+      this.addProductToCart({ productId: this.product.id, amount: this.productAmount })
+        .then(() => {
+          this.productAdded = true;
+          this.productAddedSending = false;
+        });
     },
+
     increment() {
       this.$store.commit('incrementCartItem');
     },
@@ -256,6 +282,25 @@ export default {
       this.$store.commit('decrementCartItem');
     },
 
+    loadProduct() {
+      this.productLoading = true;
+      this.productLoadingFailed = false;
+      axios.get(API_BASE_URL + '/api/products/' + this.$route.params.id)
+        .then((response) => this.productData = response.data)
+        .catch(() => this.productLoadingFailed = true)
+        .then(() => this.productLoading = false);
+    },
+
+  },
+
+  created() {
+    this.loadProduct();
+  },
+
+  watch: {
+    '$route.params.id'() {
+      this.loadProduct();
+    },
   },
 };
 </script>
