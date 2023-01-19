@@ -1,9 +1,10 @@
 /* eslint-disable  */
-
 import axios from 'axios';
+import {
+  API_BASE_URL
+} from '@/config';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import API_BASE_URL from '@/config';
 
 Vue.use(Vuex);
 
@@ -85,7 +86,6 @@ export default new Vuex.Store({
   },
 
   actions: {
-
     loadCart(context) {
       return axios.get(API_BASE_URL + '/api/baskets', {
           params: {
@@ -97,9 +97,10 @@ export default new Vuex.Store({
             localStorage.setItem('userAccessKey', response.data.user.accessKey);
             context.commit('updateUserAccessKey', response.data.user.accessKey);
           }
+
           context.commit('updateCartProductsData', response.data.items);
           context.commit('syncCartProducts');
-        });
+        })
     },
 
     addProductToCart(context, {
@@ -113,13 +114,14 @@ export default new Vuex.Store({
             quantity: amount,
           }, {
             params: {
-              UserAccessKey: context.state.userAccessKey,
+              userAccessKey: context.state.userAccessKey,
             }
           }).then(response => {
             context.commit('updateCartProductsData', response.data.items);
             context.commit('syncCartProducts');
           });
         })
+
     },
 
     updateCartProductAmount(context, {
@@ -140,7 +142,7 @@ export default new Vuex.Store({
           quantity: amount,
         }, {
           params: {
-            UserAccessKey: context.state.userAccessKey,
+            userAccessKey: context.state.userAccessKey,
           }
         }).then(response => {
           context.commit('updateCartProductsData', response.data.items);
@@ -152,12 +154,13 @@ export default new Vuex.Store({
 
     deleteProductFromCart(context, productId) {
       context.commit('deleteProductCart', productId);
+
       return axios.delete(API_BASE_URL + '/api/baskets/products', {
           params: {
             userAccessKey: context.state.userAccessKey,
           },
           data: {
-            productId: productId
+            productId: productId,
           }
         })
         .then(response => {
@@ -166,5 +169,7 @@ export default new Vuex.Store({
           context.commit('syncCartProducts');
         });
     }
+
   },
+
 });
