@@ -1,4 +1,4 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
+<!-- eslint-disable -->
 <template>
   <div>
     <li class="cart__item product">
@@ -16,21 +16,10 @@
       <span class="product__code">
         Артикул: {{ item.product.id }}
       </span>
-      <div class="product__counter form__counter">
-        <button type="button" aria-label="Убрать один товар">
-          <svg width="10" height="10" fill="currentColor">
-            <use xlink:href="#icon-minus"></use>
-          </svg>
-        </button>
-
-        <input type="text" v-model.number="amount" name="count">
-
-        <button type="button" aria-label="Добавить один товар">
-          <svg width="10" height="10" fill="currentColor">
-            <use xlink:href="#icon-plus"></use>
-          </svg>
-        </button>
-      </div>
+      <BaseAmountChanges
+          :amount.sync="amount"
+          class="product__counter"
+        />
       <b class="product__price">
         {{ (item.amount * item.product.price) | numberFormat }} ₽
       </b>
@@ -49,11 +38,14 @@
 </template>
 
 <script>
-
+/* eslint-disable */
+import { mapActions } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
+import BaseAmountChanges from '@/components/BaseAmountChanges.vue';
 
 export default {
 
+  components: { BaseAmountChanges },
   props: ['item'],
 
   filters: {
@@ -73,8 +65,18 @@ export default {
   },
 
   methods: {
+    ...mapActions(['deleteProductFromCart']),
+
     deleteProduct(productId) {
-      this.$store.commit('deleteCartProduct', productId);
+      this.deleteProductFromCart(productId);
+    },
+
+    increment() {
+      this.amount++;
+    },
+
+    decrement() {
+      this.amount--;
     },
   },
 };

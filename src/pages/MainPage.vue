@@ -17,7 +17,7 @@
         :color-id.sync="filterColorId"
       />
       <section class="catalog">
-        <div v-if="productsLoading">Загрузка товаров...</div>
+        <Loader v-if="productsLoading"/>
         <div v-if="productsLoadingFailed">Произошла ошибка при загрузке товаров
           <button @click.prevent="loadProducts">Попробовать еще раз</button>
         </div>
@@ -37,6 +37,7 @@ import {API_BASE_URL} from '@/config';
 import ProductsList from '@/components/ProductsList.vue';
 import BasePagination from '@/components/BasePagination.vue';
 import ProductsFilter from '@/components/ProductsFilter.vue';
+import Loader from '@/components/Loader.vue';
 
 export default {
 
@@ -44,6 +45,7 @@ export default {
     ProductsList,
     BasePagination,
     ProductsFilter,
+    Loader,
   },
 
   data() {
@@ -95,7 +97,7 @@ export default {
           .then((response) => this.productsData = response.data)
           .catch(() => this.productsLoadingFailed = true)
           .then(() => this.productsLoading = false);
-      }, 500);
+      }, 2000);
     },
   },
 

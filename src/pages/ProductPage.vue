@@ -1,7 +1,7 @@
-<!-- eslint-disable vuejs-accessibility/label-has-for -->
+<!-- eslint-disable -->
 <template>
   <div>
-    <main class="content container" v-if="productLoading">Загрузка товара...</main>
+    <main class="content container" v-if="productLoading"><Loader class="loader--position"/></main>
     <main class="content container" v-else-if="!productData">Не удалось загрузить товар</main>
     <main class="content container" v-else>
       <div class="content__top">
@@ -49,12 +49,12 @@
 
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет:</legend>
-                <ul
-                  class="colors"
-                  v-for="color in colors"
-                  :key="color.id"
-                >
-                  <li class="colors__item">
+                <ul class="colors">
+                  <li
+                    class="colors__item"
+                    v-for="color in colors"
+                    :key="color.id"
+                  >
                     <label class="colors__label">
                       <input
                         class="colors__radio sr-only"
@@ -109,9 +109,7 @@
               <div class="item__row">
                 <div class="form__counter">
                   <BaseAmountChanges
-                    :amount="productAmount"
-                    @increment="increment()"
-                    @decrement="decrement()"
+                    :amount.sync="productAmount"
                   />
                 </div>
 
@@ -205,16 +203,17 @@
 
 <script>
 /* eslint-disable */
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 import axios from 'axios';
 import {API_BASE_URL} from '@/config';
 import gotoPage from '@/helpers/gotoPage';
 import numberFormat from '@/helpers/numberFormat';
 import BaseAmountChanges from '@/components/BaseAmountChanges.vue';
+import Loader  from '@/components/Loader.vue';
 
 export default {
 
-  components: { BaseAmountChanges },
+  components: { BaseAmountChanges, Loader },
 
   data() {
     return {
@@ -271,10 +270,13 @@ export default {
     loadProduct() {
       this.productLoading = true;
       this.productLoadingFailed = false;
-      axios.get(API_BASE_URL + '/api/products/' + this.$route.params.id)
-        .then((response) => this.productData = response.data)
-        .catch(() => this.productLoadingFailed = true)
-        .then(() => this.productLoading = false);
+      clearTimeout(this.loadPorductTimer);
+      this.loadPorductTimer = setTimeout(() => {
+        return axios.get(API_BASE_URL + '/api/products/' + this.$route.params.id)
+          .then((response) => this.productData = response.data)
+          .catch(() => this.productLoadingFailed = true)
+          .then(() => this.productLoading = false);
+      }, 1500);
     },
   },
 
