@@ -5,6 +5,7 @@ import MainPage from '@/pages/MainPage';
 import NotFoundPage from '@/pages/NotFoundPage';
 import ProductPage from '@/pages/ProductPage';
 import CartPage from '@/pages/CartPage';
+import OrderPages from '@/pages/OrderPages';
 
 Vue.use(VueRouter);
 
@@ -22,6 +23,11 @@ const routes = [{
     name: 'cart',
     component: CartPage,
     path: '/cart',
+  },
+  {
+    name: 'order',
+    component: OrderPages,
+    path: '/order',
   },
   {
     name: 'notFound',
