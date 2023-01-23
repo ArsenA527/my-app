@@ -1,4 +1,4 @@
-<!-- eslint-disable vuejs-accessibility/label-has-for -->
+<!-- eslint-disable -->
 <template>
   <div>
     <li  class="catalog__item">

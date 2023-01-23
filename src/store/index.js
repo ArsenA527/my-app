@@ -18,6 +18,11 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    resetCart(state) {
+      state.cartProducts = [];
+      state.cartProductsData = [];
+    },
+
     updateCartProductAmount(state, {
       productId,
       amount,

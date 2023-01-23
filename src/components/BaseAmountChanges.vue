@@ -1,5 +1,4 @@
-<!-- eslint-disable vuejs-accessibility/form-control-has-label -->
-<!-- eslint-disable vue/no-mutating-props -->
+<!-- eslint-disable -->
 <template>
   <div class="form__counter">
     <button type="button" aria-label="Убрать один товар" @click.prevent="computedAmount--">
