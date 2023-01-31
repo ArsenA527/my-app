@@ -30,7 +30,7 @@
             <img
               width="570"
               height="570"
-              :src="product.imgsrc"
+              :src="product.image.file.url"
               :alt="product.title"
             >
           </div>
@@ -122,8 +122,8 @@
                 </button>
               </div>
 
-              <div v-show="productAdded">Товар добавлен в корзину</div>
-              <div v-show="productAddedSending">Добавляем товар в корзину</div>
+              <div v-show="productAdded" style="margin-top: 10px;">Товар добавлен в корзину</div>
+              <div v-show="productAddedSending" style="margin-top: 10px;">Добавляем товар в корзину</div>
             </form>
           </div>
         </div>

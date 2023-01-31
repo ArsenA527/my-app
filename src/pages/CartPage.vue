@@ -43,6 +43,7 @@
             :to="{name: 'order'}"
             class="cart__button button button--primery"
             type="submit"
+            :disabled="products.length === 0"
           >
             Оформить заказ
           </router-link>

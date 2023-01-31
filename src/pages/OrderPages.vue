@@ -117,26 +117,20 @@
 
         <div class="cart__block">
           <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>18 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>4 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>8 990 ₽</b>
-              <span>Артикул: 150030</span>
+            <li
+              class="cart__order"
+              v-for="product in products"
+              :key="product.productId"
+              >
+              <h3> {{ product.product.title }} </h3>
+              <b>{{ product.product.price | numberFormat }} ₽</b>
+              <span>Артикул: {{ product.product.id }}</span>
             </li>
           </ul>
 
           <div class="cart__total">
             <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>37 970 ₽</b></p>
+            <p>Итого: <b>{{ totalAmount }}</b> товара на сумму <b>{{ totalPrice | numberFormat }} ₽</b></p>
           </div>
 
           <button class="cart__button button button--primery" type="submit">
@@ -157,13 +151,14 @@
 <script>
 
 /* eslint-disable */
-
+import { mapGetters } from 'vuex';
 import axios from 'axios';
 import {
   API_BASE_URL,
 } from '@/config';
 import BaseFormTextarea from '@/components/BaseFormTextarea.vue';
 import BaseFormText from '@/components/BaseFormText.vue';
+import numberFormat from '@/helpers/numberFormat';
 
 export default {
   components: {
@@ -177,6 +172,17 @@ export default {
       formError: {},
       formErrorMessage: '',
     };
+  },
+
+  computed: {
+    ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice', totalAmount: 'cartTotalAmount' }),
+    products() {
+      return this.$store.getters.cartDetailProducts;
+    },
+  },
+
+  filters: {
+    numberFormat,
   },
 
   methods: {

@@ -13,7 +13,7 @@ export default {
       get() {
         return this.value;
       },
-      set() {
+      set(value) {
         this.$emit('input', value);
       },
     },
