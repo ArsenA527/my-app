@@ -41,7 +41,7 @@
                 Получатель
               </span>
               <span class="dictionary__value">
-                Иванова Василиса Алексеевна
+                {{ orderInfo.name }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -49,7 +49,7 @@
                 Адрес доставки
               </span>
               <span class="dictionary__value">
-                Москва, ул. Ленина, 21, кв. 33
+                {{ orderInfo.address }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -57,7 +57,7 @@
                 Телефон
               </span>
               <span class="dictionary__value">
-                8 800 989 74 84
+                {{ orderInfo.phone }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -65,7 +65,7 @@
                 Email
               </span>
               <span class="dictionary__value">
-                lalala@mail.ru
+                {{ orderInfo.email }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -82,16 +82,19 @@
         <div class="cart__block">
           <ul class="cart__orders">
             <li
-              class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>18 990 ₽</b>
-              <span>Артикул: 150030</span>
+              class="cart__order"
+              v-for="product in products"
+              :key="product.productId"
+              >
+              <h3> {{ product.product.title }} </h3>
+              <b>{{ product.price | numberFormat }} ₽</b>
+              <span>Артикул: {{ product.product.id }}</span>
             </li>
           </ul>
 
           <div class="cart__total">
             <p>Доставка: <b>500 ₽</b></p>
-            <p>Итого: <b>{{ totalAmount }}</b> товара на сумму <b>{{ totalPrice | numberFormat }} ₽</b></p>
+            <p>Итого: <b>{{ products.length }}</b> товара на сумму <b>{{ orderInfo.totalPrice | numberFormat }} ₽</b></p>
           </div>
         </div>
       </form>
@@ -100,10 +103,19 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 
 export default {
+  computed: {
+    orderInfo() {
+      return this.$store.state.orderInfo;
+    },
+
+    products() {
+      return this.orderInfo.basket.items;
+    },
+  },
+
   created() {
     if (this.$store.state.orderInfo && this.$store.state.orderInfo.id === this.$route.params.id) {
       return;
@@ -117,16 +129,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(['loaderOrderInfo']),
-    ...mapGetters({ products: 'cartDetailProducts', totalPrice: 'cartTotalPrice', totalAmount: 'cartTotalAmount' }),
 
-    products() {
-      return this.$store.getters.cartDetailProducts;
-    },
-
-    loaderInfo(infoId) {
-      this.loaderOrderInfo(infoId);
-    },
   },
 };
 </script>
