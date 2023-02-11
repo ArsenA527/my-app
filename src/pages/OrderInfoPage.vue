@@ -127,9 +127,5 @@ export default {
   filters: {
     numberFormat,
   },
-
-  methods: {
-
-  },
 };
 </script>

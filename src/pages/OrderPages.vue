@@ -133,8 +133,13 @@
             <p>Итого: <b>{{ totalAmount }}</b> товара на сумму <b>{{ totalPrice | numberFormat }} ₽</b></p>
           </div>
 
-          <button class="cart__button button button--primery" type="submit">
-            Оформить заказ
+          <button
+            @click.prevent="sendInfoSpinner"
+            class="cart__button button button--primery"
+            type="submit"
+          >
+            <img v-if="spinnerLoader" src="img/spinner.gif" width="60px" height="60px"/>
+            <span v-else>Оформить заказ</span>
           </button>
         </div>
         <div class="cart__error form__error-block" v-if="formErrorMessage">
@@ -171,6 +176,8 @@ export default {
       formData: {},
       formError: {},
       formErrorMessage: '',
+
+      spinnerLoader: false,
     };
   },
 
@@ -186,6 +193,12 @@ export default {
   },
 
   methods: {
+    sendInfoSpinner() {
+      if (JSON.stringify(this.formData) !== '{}')
+        this.spinnerLoader = true;
+      else this.spinnerLoader = false;
+    },
+
     order() {
       this.formError = {};
       this.formErrorMessage = '';
