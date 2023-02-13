@@ -134,7 +134,6 @@
           </div>
 
           <button
-            @click.prevent="sendInfoSpinner"
             class="cart__button button button--primery"
             type="submit"
           >
@@ -193,13 +192,9 @@ export default {
   },
 
   methods: {
-    sendInfoSpinner() {
-      if (JSON.stringify(this.formData) !== '{}')
-        this.spinnerLoader = true;
-      else this.spinnerLoader = false;
-    },
 
     order() {
+      this.spinnerLoader = true;
       this.formError = {};
       this.formErrorMessage = '';
 
